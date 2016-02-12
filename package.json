@@ -1,0 +1,29 @@
+{
+  "name": "hubot-custom-adapter",
+  "version": "0.1.0",
+  "description": "Fork of hubot campfire-adapter that use custom REST API.",
+  "main": "index.coffee",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hubots/custom-adapter"
+  },
+  "keywords": [
+    "hubot",
+    "adapter"
+  ],
+  "author": "Sergey Todyshev <stodyshev@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hubots/custom-adapter/issues"
+  },
+  "homepage": "https://github.com/hubots/custom-adapter",
+  "peerDependencies": {
+    "hubot": ">=2.0"
+  },
+  "devDependencies": {
+    "coffee-script": "^1.10.0"
+  }
+}
