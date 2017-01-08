@@ -34,8 +34,10 @@ class CustomAdapter extends Adapter
 
     withAuthor = (callback) ->
       (id, created, thread_id, user_id, body) ->
-        bot.getUser user_id, (err, userData) ->
-          user = userData.user || userData
+        bot.getUser user_id, (err, user) ->
+          if err
+            logger.error err
+            return
           logger.debug "user info: %s", json(user)
           if user
             author = self.robot.brain.userForId(user.id, user)

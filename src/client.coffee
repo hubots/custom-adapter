@@ -89,15 +89,15 @@ class Client extends EventEmitter
                 data = JSON.parse part
                 logger.debug "json data: %s", json(data)
                 if data.type == "message"
-                  thread_id = data.thread_id || data.body?.thread_id
-                  body = if data.body then data.body.body || data.body else {}
+                  msg = data.body
+                  thread_id = msg.thread_id
                   self.emit(
                     "TextMessage",
                     data.id,
                     data.created_at,
                     thread_id,
                     data.user_id || data.actor,
-                    body
+                    msg.body
                   )
               catch error
                 logger.error "data error: #{error}\n#{error.stack}"
@@ -164,17 +164,17 @@ class Client extends EventEmitter
             when 401
               throw new Error "Invalid access token provided"
             else
-              logger.error "server status code: #{response.statusCode}"
-              logger.error "server response data: #{data}"
+              logger.error "status code: #{response.statusCode}"
+              logger.error "response data: #{data}"
 
         if callback
           try
             callback null, JSON.parse(data)
           catch error
-            callback null, data or { }
+            callback error, null
 
       response.on "error", (err) ->
-        logger.error "Campfire response error: #{err}"
+        logger.error "server error: #{err}"
         callback err, { }
 
     if method is "POST" || method is "PUT"
@@ -183,7 +183,7 @@ class Client extends EventEmitter
       request.end()
 
     request.on "error", (err) ->
-      logger.error "Campfire request error: #{err}"
+      logger.error "request error: #{err}"
 
 pretty_json = true
 json = (d) ->
