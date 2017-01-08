@@ -1,6 +1,6 @@
 {
   "name": "hubot-custom-adapter",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "Fork of hubot campfire-adapter that use custom REST API.",
   "main": "index.coffee",
   "scripts": {
