@@ -1,8 +1,5 @@
-HTTP = require 'http'
-HTTPS = require 'https'
-{ EventEmitter } = require 'events'
-{ Robot, Adapter, TextMessage, EnterMessage, LeaveMessage, TopicMessage } = require 'hubot'
-{ Client } = require './client'
+{ Adapter, TextMessage, EnterMessage, LeaveMessage, TopicMessage } = require 'hubot'
+{ Client, json } = require './client'
 
 class CustomAdapter extends Adapter
   send: (envelope, strings...) ->
