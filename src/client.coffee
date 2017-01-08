@@ -7,6 +7,7 @@ class Client extends EventEmitter
     @host = options.host
     @port = options.port
     @logger = @robot.logger
+    @private = {}
 
     unless options.token?
       @robot.logger.error "Not enough parameters provided. I need a token"

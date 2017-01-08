@@ -53,7 +53,6 @@ class CustomAdapter extends Adapter
       withAuthor (id, created, room, user, body, author) ->
         unless bot.info.id is author.id
           message = new TextMessage author, body, id
-          message.private = bot.private[room]
           self.receive message
 
     bot.on "EnterMessage",
