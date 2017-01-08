@@ -3,14 +3,13 @@ HTTPS = require 'https'
 { EventEmitter } = require 'events'
 
 class Client extends EventEmitter
-  constructor: (options, robot) ->
+  constructor: (options, @robot) ->
     @host = options.host
     @port = options.port
-    @logger = robot.logger
+    @logger = @robot.logger
 
     unless options.token?
-      robot.logger.error \
-        "Not enough parameters provided. I need a token"
+      @robot.logger.error "Not enough parameters provided. I need a token"
       process.exit(1)
 
     @token         = options.token
