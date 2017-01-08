@@ -43,7 +43,7 @@ class Client extends EventEmitter
       "method" : "GET"
       "headers": headers
 
-    logger.debug "request: %s", json(options)
+    @logger.debug "request: %s", json(options)
 
     request = @http.request options, (response) ->
       response.setEncoding("utf8")
