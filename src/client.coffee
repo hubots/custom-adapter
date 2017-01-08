@@ -88,19 +88,17 @@ class Client extends EventEmitter
               try
                 data = JSON.parse part
                 logger.debug "json data: %s", json(data)
-                thread_id = data.thread_id || data.body?.thread_id
-                body = if data.body then data.body.body || data.body else {}
-                type = data.type || data.name
-                if type == "message"
-                  type = "TextMessage"
-                self.emit(
-                  type,
-                  data.id,
-                  data.created_at,
-                  thread_id,
-                  data.user_id || data.actor,
-                  body
-                )
+                if data.type == "message"
+                  thread_id = data.thread_id || data.body?.thread_id
+                  body = if data.body then data.body.body || data.body else {}
+                  self.emit(
+                    "TextMessage",
+                    data.id,
+                    data.created_at,
+                    thread_id,
+                    data.user_id || data.actor,
+                    body
+                  )
               catch error
                 logger.error "data error: #{error}\n#{error.stack}"
 
