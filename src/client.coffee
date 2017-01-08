@@ -187,3 +187,4 @@ json = (d) ->
   if pretty_json then JSON.stringify(d, null, 2) else JSON.stringify(d)
 
 exports.Client = Client
+exports.json = json
