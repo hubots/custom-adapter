@@ -20,10 +20,10 @@
     "url": "https://github.com/hubots/custom-adapter/issues"
   },
   "homepage": "https://github.com/hubots/custom-adapter",
-  "peerDependencies": {
-    "hubot": ">=2.0"
+  "dependencies": {
+    "hubot": "^2.19.0"
   },
   "devDependencies": {
-    "coffee-script": "^1.10.0"
+    "coffee-script": "^1.12.2"
   }
 }
