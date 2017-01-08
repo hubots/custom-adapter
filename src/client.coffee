@@ -55,8 +55,7 @@ class Client extends EventEmitter
 
       # TODO ignore non-message events
       response.on "data", (chunk) ->
-        if chunk is ' '
-          # campfire api sends a ' ' heartbeat every 3s
+        if chunk is ' ' or chunk is ':heartbeat signal'
           logger.debug "heartbeat"
           return
 
