@@ -33,8 +33,8 @@ class CustomAdapter extends Adapter
     bot = new Client(options, @robot)
 
     withAuthor = (callback) ->
-      (id, created, room, user, body) ->
-        bot.getUser user, (err, userData) ->
+      (id, created, thread_id, user_id, body) ->
+        bot.getUser user_id, (err, userData) ->
           user = userData.user || userData
           logger.debug "user info: %s", json(user)
           if user
@@ -44,8 +44,8 @@ class CustomAdapter extends Adapter
               .users[userId].name = user.name
             self.robot.brain.data
               .users[userId].email_address = user.email_address || user.email
-            author.room = room
-            callback id, created, room, user, body, author
+            author.room = thread_id
+            callback id, created, thread_id, user, body, author
 
     bot.on "TextMessage",
       withAuthor (id, created, room, user, body, author) ->
