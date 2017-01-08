@@ -40,12 +40,12 @@ class CustomAdapter extends Adapter
             return
           logger.debug "user info: %s", json(user)
           if user
-            author = self.robot.brain.userForId(user.id, user)
             userId = user.id
-            self.robot.brain.data
-              .users[userId].name = user.name
-            self.robot.brain.data
-              .users[userId].email_address = user.email_address || user.email
+            user.room = thread_id
+            author = self.robot.brain.userForId(user.id, user)
+            users = self.robot.brain.data.users
+            users[userId].name = user.name
+            users[userId].email_address = user.email_address || user.email
             author.room = thread_id
             callback id, created, thread_id, user, body, author
 
