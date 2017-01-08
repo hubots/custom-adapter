@@ -29,6 +29,7 @@ class Client extends EventEmitter
   # listen for activity in channels
   listen: ->
     self = @
+    logger = @logger
     host = @host
     headers =
       "Host"          : host
@@ -43,7 +44,7 @@ class Client extends EventEmitter
       "method" : "GET"
       "headers": headers
 
-    @logger.debug "request: %s", json(options)
+    logger.debug "request: %s", json(options)
 
     request = @http.request options, (response) ->
       response.setEncoding("utf8")
