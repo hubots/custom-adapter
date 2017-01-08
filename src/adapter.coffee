@@ -2,7 +2,7 @@ HTTP = require 'http'
 HTTPS = require 'https'
 { EventEmitter } = require 'events'
 { Robot, Adapter, TextMessage, EnterMessage, LeaveMessage, TopicMessage } = require 'hubot'
-{ EventStream } = require './eventStream'
+{ Client } = require './client'
 
 class CustomAdapter extends Adapter
   send: (envelope, strings...) ->
@@ -12,9 +12,9 @@ class CustomAdapter extends Adapter
         string()
         @send envelope, strings...
       else
-        @robot.logger.debug "send #{string} to room #{envelope.room}"
-        @bot.Room(envelope.room).speak string, (err, data) =>
-          @robot.logger.error "Campfire send error: #{err}" if err?
+        @robot.logger.debug "send #{string} to thread #{envelope.room}"
+        @bot.sendMessage envelope.room, string, (err, data) =>
+          @robot.logger.error "send error: #{err}" if err?
           @send envelope, strings...
 
   emote: (envelope, strings...) ->
@@ -23,44 +23,21 @@ class CustomAdapter extends Adapter
   reply: (envelope, strings...) ->
     @send envelope, strings.map((str) -> "#{envelope.user.name}: #{str}")...
 
-  topic: (envelope, strings...) ->
-    @bot.Room(envelope.room).topic strings.join(" / "), (err, data) =>
-      @robot.logger.error "Campfire topic error: #{err}" if err?
-
-  play: (envelope, strings...) ->
-    @bot.Room(envelope.room).sound strings.shift(), (err, data) =>
-      @robot.logger.error "Campfire sound error: #{err}" if err?
-      @play envelope, strings...
-
-  locked: (envelope, strings...) ->
-    if envelope.message.private
-      @send envelope, strings...
-    else
-      @bot.Room(envelope.room).lock (args...) =>
-        strings.push =>
-          # campfire won't send messages from just before a room unlock. 3000
-          # is the 3-second poll.
-          setTimeout (=> @bot.Room(envelope.room).unlock()), 3000
-        @send envelope, strings...
-
   run: ->
     logger = @robot.logger
     logger.info "loading custom campfire adapter"
     self = @
 
     options =
-      host: process.env.HUBOT_CAMPFIRE_HOST
-      port: process.env.HUBOT_CAMPFIRE_PORT || 443
-      prefix: process.env.HUBOT_CAMPFIRE_APIPREFIX
-      token: process.env.HUBOT_CAMPFIRE_TOKEN
-      rooms: process.env.HUBOT_CAMPFIRE_ROOMS || ""
-      account: process.env.HUBOT_CAMPFIRE_ACCOUNT
+      host: process.env.HUBOT_CHAT_HOST
+      port: process.env.HUBOT_CHAT_PORT || 443
+      token: process.env.HUBOT_CHAT_TOKEN
 
-    bot = new EventStream(options, @robot)
+    bot = new Client(options, @robot)
 
     withAuthor = (callback) ->
       (id, created, room, user, body) ->
-        bot.User user, (err, userData) ->
+        bot.getUser user, (err, userData) ->
           user = userData.user || userData
           logger.debug "user info: %s", json(user)
           if user
@@ -103,7 +80,7 @@ class CustomAdapter extends Adapter
       withAuthor (id, created, room, user, body, author) ->
         bot.private[room] = false
 
-    bot.Me (err, data) ->
+    bot.me (err, data) ->
       if err
         logger.error "cannot get user info: %s", err
         return
@@ -113,27 +90,8 @@ class CustomAdapter extends Adapter
       bot.info = user
       bot.name = user.name
 
-      unless bot.rooms and bot.rooms.length
-        logger.info "listening all rooms"
-        bot.Rooms (err, rooms) ->
-          bot.rooms = rooms.map (t) -> t.id
-          listenRooms()
-        return
-
-      listenRooms()
-
-    listenRooms = () ->
-      logger.info "listening rooms: %s", bot.rooms.join(",")
-      for roomId in bot.rooms.filter(identity)
-        do (roomId) ->
-          room = bot.Room(roomId)
-          return unless room
-          room.join (err, callback) ->
-            bot.Room(roomId).listen()
-
-    bot.on "reconnect", (roomId) ->
-      bot.Room(roomId).join (err, callback) ->
-        bot.Room(roomId).listen()
+      logger.info "listening all channels"
+      bot.listen()
 
     @bot = bot
 
