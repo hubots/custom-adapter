@@ -73,6 +73,10 @@ class Client extends EventEmitter
             part = buf.substr(0, i).trim()
             buf = buf.substr(i + 1)
 
+            if part is ':heartbeat signal'
+              logger.debug "heartbeat"
+              continue
+
             # support text/event-stream
             if sse
               i = part.indexOf(":")
