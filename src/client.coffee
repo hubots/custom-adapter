@@ -28,10 +28,11 @@ class Client extends EventEmitter
 
   # listen for activity in channels
   listen: ->
+    self = @
     host = @host
     headers =
       "Host"          : host
-      "Authorization" : self.authorization
+      "Authorization" : @authorization
       "User-Agent"    : "Hubot/#{@robot?.version} (#{@robot?.name})"
 
     options =
@@ -44,7 +45,7 @@ class Client extends EventEmitter
 
     logger.debug "request: %s", json(options)
 
-    request = self.http.request options, (response) ->
+    request = @http.request options, (response) ->
       response.setEncoding("utf8")
       contentType = response.headers['content-type']
       sse = contentType == "text/event-stream"
